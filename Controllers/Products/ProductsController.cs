@@ -135,5 +135,30 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products {
                 })
             });
         }
+
+        [Route("{code}"), HttpGet]
+        public IActionResult Get(string code)
+        {
+            var product = MockProducts
+                .SingleOrDefault(e => e.Code.Equals(code.Trim(), StringComparison.InvariantCultureIgnoreCase));
+            
+            if(product == null)
+                return NotFound();
+            return Json(new ProductModel{
+                Id = product.Id,
+                Code = product.Code,
+                Name = product.Name,
+                Description = product.Description,
+                Price = product.Price,
+                CurrentStock = product.StockMovements.Sum(m => m.Quantity),
+                CreatedOn = product.CreatedOn,
+                CreatedBy = product.CreatedBy,
+                UpdatedOn = product.UpdatedOn,
+                UpdatedBy = product.UpdatedBy,
+                DeletedOn = product.DeletedOn,
+                DeletedBy = product.DeletedBy,
+                Version = product.Version
+            });
+        }
     }
 }
