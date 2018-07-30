@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AcademiaCodigoWarehouseApi.Controllers.Products {
     [Route ("api/products")]
-    public class ProductsController : ControllerBase, IProductsEndpoint {
+    public class ProductsController : Controller, IProductsEndpoint {
 
         private static readonly List<ProductEntity> MockProducts = new List<ProductEntity>{
                 new ProductEntity {
@@ -52,8 +52,6 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products {
             string code, string name, decimal? minPrice, decimal? maxPrice, bool? isActive,
             int skip = 0, int take = 20
         ) {
-            var username = User.Identity.Name;
-
             var filterItems = MockProducts.Select(e => new ProductSearchItemModel{
                 Code = e.Code,
                 Name = e.Name,
@@ -93,12 +91,49 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products {
         }
 
         [Route ("create"), HttpPost]
-        public CreateProductResultModel Create ([FromBody] CreateProductModel model) {
+        public IActionResult Create ([FromBody] CreateProductModel model) {
             if (ModelState.IsValid) {
 
+                if(MockProducts.Any(e => e.Code.Equals(model.Code.Trim(), StringComparison.InvariantCultureIgnoreCase))){
+                    return Conflict(new {
+                        Message="Código duplicado"
+                    });
+                }
+
+                if(MockProducts.Any(e => e.Name.Equals(model.Name.Trim(), StringComparison.InvariantCultureIgnoreCase))){
+                    return Conflict(new {
+                        Message="Nome duplicado"
+                    });
+                }
+
+                var now = DateTimeOffset.Now;
+                var username = User.Identity.Name;
+                var newId = MockProducts.Max(e => e.Id) + 1;
+
+                MockProducts.Add(new ProductEntity{
+                    Id = newId,
+                    Code = model.Code,
+                    Name = model.Name,
+                    Description = model.Description,
+                    Price = model.Price,
+                    CreatedOn = now,
+                    CreatedBy = username,
+                    UpdatedOn = now,
+                    UpdatedBy = username,
+                });
+
+                return Json(new CreateProductResultModel{
+                    Id = newId
+                });
             }
 
-            throw new NotImplementedException ();
+            return UnprocessableEntity(new {
+                Message="Entidade com dados inválidos",
+                ModelState = ModelState.Select(e => new {
+                    Key = e.Key,
+                    Value = e.Value.Errors
+                })
+            });
         }
     }
 }
