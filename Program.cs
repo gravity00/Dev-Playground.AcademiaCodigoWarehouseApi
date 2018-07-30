@@ -17,8 +17,12 @@ namespace AcademiaCodigoWarehouseApi
             CreateWebHostBuilder(args).Build().Run();
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args) {
+            return WebHost.CreateDefaultBuilder(args)
+                .ConfigureLogging(loggingBuilder =>{
+                    loggingBuilder.SetMinimumLevel(LogLevel.Trace);
+                })
                 .UseStartup<Startup>();
+        }
     }
 }
