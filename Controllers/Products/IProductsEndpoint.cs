@@ -12,5 +12,7 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products
         IActionResult Create (CreateProductModel model);
 
         IActionResult Get(string code);
+
+        IActionResult Update (long id, UpdateProductModel model);
     }
 }

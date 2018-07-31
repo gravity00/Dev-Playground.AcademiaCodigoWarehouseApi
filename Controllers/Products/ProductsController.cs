@@ -160,5 +160,53 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products {
                 Version = product.Version
             });
         }
+
+        [Route("update/{id}"), HttpPost]
+        public IActionResult Update (long id, [FromBody] UpdateProductModel model){
+            if(ModelState.IsValid){
+                var product = MockProducts.SingleOrDefault(e => e.Id == id);
+                if(product == null){
+                    return NotFound();
+                }
+
+                if(product.Version != model.Version){
+                    return Conflict(new {
+                        Message="Entidade foi alterada por outro utilizador"
+                    });
+                }
+
+                if(MockProducts.Any(e => e.Code.Equals(model.Code.Trim(), StringComparison.InvariantCultureIgnoreCase))){
+                    return Conflict(new {
+                        Message="Código duplicado"
+                    });
+                }
+
+                if(MockProducts.Any(e => e.Name.Equals(model.Name.Trim(), StringComparison.InvariantCultureIgnoreCase))){
+                    return Conflict(new {
+                        Message="Nome duplicado"
+                    });
+                }
+
+                product.Code = model.Code;
+                product.Name = model.Name;
+                product.Description = model.Description;
+                product.Price = model.Price;
+                product.UpdatedOn = DateTimeOffset.Now;
+                product.UpdatedBy = User.Identity.Name;
+                ++product.Version;
+
+                return Json(new {
+                    Version = product.Version
+                });
+            }
+
+            return UnprocessableEntity(new {
+                Message="Entidade com dados inválidos",
+                ModelState = ModelState.Select(e => new {
+                    Key = e.Key,
+                    Value = e.Value.Errors
+                })
+            });
+        }
     }
 }
