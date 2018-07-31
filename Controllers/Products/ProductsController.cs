@@ -197,7 +197,7 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products {
                 product.UpdatedBy = User.Identity.Name;
                 ++product.Version;
 
-                return Json(new UpdateProductResultModel{
+                return Json(new ProductActionResultModel{
                     Version = product.Version
                 });
             }
@@ -227,8 +227,11 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products {
 
                 product.DeletedOn = product.UpdatedOn = DateTimeOffset.Now;
                 product.DeletedBy = product.DeletedBy = User.Identity.Name;
-                
-                return Ok();
+                ++product.Version;
+
+                return Json(new ProductActionResultModel{
+                    Version = product.Version
+                });
             }
 
             return UnprocessableEntity(new {

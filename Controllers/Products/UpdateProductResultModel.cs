@@ -1,6 +1,6 @@
 namespace AcademiaCodigoWarehouseApi.Controllers.Products
 {
-    public class UpdateProductResultModel{
+    public class ProductActionResultModel{
         public long Version { get; set; }
     }
 }
