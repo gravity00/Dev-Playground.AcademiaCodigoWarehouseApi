@@ -226,7 +226,7 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products {
                 }
 
                 product.DeletedOn = product.UpdatedOn = DateTimeOffset.Now;
-                product.DeletedBy = product.DeletedBy = User.Identity.Name;
+                product.DeletedBy = product.UpdatedBy = User.Identity.Name;
                 ++product.Version;
 
                 return Json(new ProductActionResultModel{
