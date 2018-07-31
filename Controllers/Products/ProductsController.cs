@@ -195,7 +195,7 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products {
                 product.UpdatedBy = User.Identity.Name;
                 ++product.Version;
 
-                return Json(new {
+                return Json(new UpdateProductResultModel{
                     Version = product.Version
                 });
             }
