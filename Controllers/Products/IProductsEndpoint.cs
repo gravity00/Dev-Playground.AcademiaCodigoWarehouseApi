@@ -14,5 +14,7 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products
         IActionResult Get(string code);
 
         IActionResult Update (long id, UpdateProductModel model);
+
+        IActionResult Delete (long id, DeleteProductModel model);
     }
 }

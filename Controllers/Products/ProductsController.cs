@@ -175,13 +175,15 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products {
                     });
                 }
 
-                if(MockProducts.Any(e => e.Code.Equals(model.Code.Trim(), StringComparison.InvariantCultureIgnoreCase))){
+                var modelCode = model.Code.Trim();
+                if(!product.Code.EqualsOrdinalIgnoreCase(modelCode) && MockProducts.Any(e => e.Code.EqualsOrdinalIgnoreCase(modelCode))){
                     return Conflict(new {
                         Message="Código duplicado"
                     });
                 }
 
-                if(MockProducts.Any(e => e.Name.Equals(model.Name.Trim(), StringComparison.InvariantCultureIgnoreCase))){
+                var modelName = model.Name.Trim();
+                if(!product.Name.EqualsOrdinalIgnoreCase(modelName) && MockProducts.Any(e => e.Name.EqualsOrdinalIgnoreCase(modelName))){
                     return Conflict(new {
                         Message="Nome duplicado"
                     });
@@ -198,6 +200,35 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products {
                 return Json(new UpdateProductResultModel{
                     Version = product.Version
                 });
+            }
+
+            return UnprocessableEntity(new {
+                Message="Entidade com dados inválidos",
+                ModelState = ModelState.Select(e => new {
+                    Key = e.Key,
+                    Value = e.Value.Errors
+                })
+            });
+        }
+
+        [Route("delete/{id}"), HttpPost]
+        public IActionResult Delete (long id, [FromBody] DeleteProductModel model){
+            if(ModelState.IsValid){
+                var product = MockProducts.SingleOrDefault(e => e.Id == id);
+                if(product == null){
+                    return NotFound();
+                }
+
+                if(product.Version != model.Version){
+                    return Conflict(new {
+                        Message="Entidade foi alterada por outro utilizador"
+                    });
+                }
+
+                product.DeletedOn = product.UpdatedOn = DateTimeOffset.Now;
+                product.DeletedBy = product.DeletedBy = User.Identity.Name;
+                
+                return Ok();
             }
 
             return UnprocessableEntity(new {
