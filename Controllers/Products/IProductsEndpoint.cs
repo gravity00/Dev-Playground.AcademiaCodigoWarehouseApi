@@ -15,6 +15,6 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products
 
         IActionResult Update (long id, UpdateProductModel model);
 
-        IActionResult Delete (long id, DeleteProductModel model);
+        IActionResult Deactivate (long id, DeactivateProductModel model);
     }
 }

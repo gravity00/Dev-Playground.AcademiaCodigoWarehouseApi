@@ -212,7 +212,7 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products {
         }
 
         [Route("delete/{id}"), HttpPost]
-        public IActionResult Delete (long id, [FromBody] DeleteProductModel model){
+        public IActionResult Deactivate (long id, [FromBody] DeactivateProductModel model){
             if(ModelState.IsValid){
                 var product = MockProducts.SingleOrDefault(e => e.Id == id);
                 if(product == null){
