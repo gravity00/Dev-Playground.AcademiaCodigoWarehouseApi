@@ -62,24 +62,24 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products {
         public IActionResult Create ([FromBody] CreateProductModel model) {
             if (ModelState.IsValid) {
 
-                if(MockProducts.Any(e => e.Code.Equals(model.Code.Trim(), StringComparison.InvariantCultureIgnoreCase))){
+                var productsSet = _ctx.Set<ProductEntity>();
+
+                if(productsSet.Any(e => e.Code.Equals(model.Code.Trim(), StringComparison.InvariantCultureIgnoreCase))){
                     return Conflict(new {
                         Message="Código duplicado"
                     });
                 }
 
-                if(MockProducts.Any(e => e.Name.Equals(model.Name.Trim(), StringComparison.InvariantCultureIgnoreCase))){
+                if(productsSet.Any(e => e.Name.Equals(model.Name.Trim(), StringComparison.InvariantCultureIgnoreCase))){
                     return Conflict(new {
                         Message="Nome duplicado"
                     });
                 }
-
+                
                 var now = DateTimeOffset.Now;
                 var username = User.Identity.Name;
-                var newId = MockProducts.Max(e => e.Id) + 1;
 
-                MockProducts.Add(new ProductEntity{
-                    Id = newId,
+                var product = new ProductEntity{
                     Code = model.Code,
                     Name = model.Name,
                     Description = model.Description,
@@ -88,10 +88,13 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products {
                     CreatedBy = username,
                     UpdatedOn = now,
                     UpdatedBy = username,
-                });
+                };
+                productsSet.Add(product);
+
+                _ctx.SaveChanges();
 
                 return Json(new CreateProductResultModel{
-                    Id = newId
+                    Id = product.Id
                 });
             }
 

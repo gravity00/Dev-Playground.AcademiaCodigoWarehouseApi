@@ -34,7 +34,6 @@ namespace AcademiaCodigoWarehouseApi {
         private void SeedDummyData(WarehouseContext ctx){
             var dummyData = new []{
                 new ProductEntity {
-                    Id = 1,
                     Code = "11111",
                     Name = "Bola de Praia",
                     Description = "Bola de praia maravilhosa",
@@ -59,7 +58,6 @@ namespace AcademiaCodigoWarehouseApi {
                     UpdatedBy = "joao.simoes"
                 },
                 new ProductEntity {
-                    Id = 2,
                     Code = "22222",
                     Name = "Bola de Futebol",
                     Description = "Esta bola nem é assim tão boa",
