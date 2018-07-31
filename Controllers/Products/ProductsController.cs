@@ -211,7 +211,7 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products {
             });
         }
 
-        [Route("delete/{id}"), HttpPost]
+        [Route("deactivate/{id}"), HttpPost]
         public IActionResult Deactivate (long id, [FromBody] DeactivateProductModel model){
             if(ModelState.IsValid){
                 var product = MockProducts.SingleOrDefault(e => e.Id == id);
@@ -227,6 +227,40 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products {
 
                 product.DeletedOn = product.UpdatedOn = DateTimeOffset.Now;
                 product.DeletedBy = product.UpdatedBy = User.Identity.Name;
+                ++product.Version;
+
+                return Json(new ProductActionResultModel{
+                    Version = product.Version
+                });
+            }
+
+            return UnprocessableEntity(new {
+                Message="Entidade com dados inválidos",
+                ModelState = ModelState.Select(e => new {
+                    Key = e.Key,
+                    Value = e.Value.Errors
+                })
+            });
+        }
+
+        [Route("activate/{id}"), HttpPost]
+        public IActionResult Activate(long id, ActivateProductModel model){
+            if(ModelState.IsValid){
+                var product = MockProducts.SingleOrDefault(e => e.Id == id);
+                if(product == null){
+                    return NotFound();
+                }
+
+                if(product.Version != model.Version){
+                    return Conflict(new {
+                        Message="Entidade foi alterada por outro utilizador"
+                    });
+                }
+
+                product.DeletedOn = null;
+                product.DeletedBy = null;
+                product.UpdatedOn = DateTimeOffset.Now;
+                product.UpdatedBy = User.Identity.Name;
                 ++product.Version;
 
                 return Json(new ProductActionResultModel{
