@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AcademiaCodigoWarehouseApi.Database;
+using AcademiaCodigoWarehouseApi.Middleware.ApiErrorHandler;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using MySql.Data.MySqlClient;
 
 namespace AcademiaCodigoWarehouseApi {
@@ -24,6 +26,10 @@ namespace AcademiaCodigoWarehouseApi {
             if (env.IsDevelopment ()) {
                 app.UseDeveloperExceptionPage ();
             }
+
+            app.UseMiddleware<ApiErrorHandlerMiddleware>(Options.Create(new ApiErrorHandlerOptions{
+                IndentJson = true
+            }));
 
             app.UseMvcWithDefaultRoute ();
 

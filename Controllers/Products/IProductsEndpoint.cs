@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
 
 namespace AcademiaCodigoWarehouseApi.Controllers.Products
 {
@@ -9,14 +8,14 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products
             int skip = 0, int take = 20
         );
 
-        IActionResult Create (CreateProductModel model);
+        CreateProductResultModel Create (CreateProductModel model);
 
-        IActionResult Get(string code);
+        ProductModel Get(string code);
 
-        IActionResult Update (long id, UpdateProductModel model);
+        ProductActionResultModel Update (long id, UpdateProductModel model);
 
-        IActionResult Deactivate (long id, DeactivateProductModel model);
+        ProductActionResultModel Deactivate (long id, DeactivateProductModel model);
 
-        IActionResult Activate (long id, ActivateProductModel model);
+        ProductActionResultModel Activate (long id, ActivateProductModel model);
     }
 }
