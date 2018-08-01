@@ -55,7 +55,10 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products {
                     .Where (e => e.IsActive == isActive.Value);
             }
 
-            return filterItems.AsPage (skip, take).ToList ();
+            return filterItems
+                .OrderBy(e => e.Name)
+                .ThenBy(e => e.Code)
+                .AsPage (skip, take).ToList ();
         }
 
         [Route ("create"), HttpPost]
