@@ -76,7 +76,7 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products {
                 }
                 
                 var now = DateTimeOffset.Now;
-                var username = User.Identity.Name;
+                var username = GetUserName();
 
                 var product = new ProductEntity{
                     Code = model.Code,
@@ -87,6 +87,7 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products {
                     CreatedBy = username,
                     UpdatedOn = now,
                     UpdatedBy = username,
+                    Version = Guid.NewGuid()
                 };
                 productsSet.Add(product);
 
@@ -166,8 +167,10 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products {
                 product.Description = model.Description;
                 product.Price = model.Price;
                 product.UpdatedOn = DateTimeOffset.Now;
-                product.UpdatedBy = User.Identity.Name;
-                ++product.Version;
+                product.UpdatedBy = GetUserName();
+                product.Version = Guid.NewGuid();
+
+                productsSet.Update(product);
 
                 _ctx.SaveChanges();
 
@@ -200,8 +203,8 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products {
                 }
 
                 product.DeletedOn = product.UpdatedOn = DateTimeOffset.Now;
-                product.DeletedBy = product.UpdatedBy = User.Identity.Name;
-                ++product.Version;
+                product.DeletedBy = product.UpdatedBy = GetUserName();
+                product.Version = Guid.NewGuid();
 
                 _ctx.SaveChanges();
 
@@ -236,8 +239,8 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products {
                 product.DeletedOn = null;
                 product.DeletedBy = null;
                 product.UpdatedOn = DateTimeOffset.Now;
-                product.UpdatedBy = User.Identity.Name;
-                ++product.Version;
+                product.UpdatedBy = GetUserName();
+                product.Version = Guid.NewGuid();
 
                 _ctx.SaveChanges();
 
@@ -253,6 +256,10 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products {
                     Value = e.Value.Errors
                 })
             });
+        }
+
+        private string GetUserName(){
+            return User.Identity.Name ?? "anonymous";
         }
     }
 }

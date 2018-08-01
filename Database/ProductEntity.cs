@@ -15,7 +15,7 @@ namespace AcademiaCodigoWarehouseApi.Database
         public string UpdatedBy { get; set; }
         public DateTimeOffset? DeletedOn { get; set; }
         public string DeletedBy { get; set; }
-        public long Version { get; set; }
+        public Guid Version { get; set; }
         public ICollection<StockMovementEntity> StockMovements { get; set; }
 
         public ProductEntity () {

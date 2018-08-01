@@ -14,7 +14,7 @@ namespace AcademiaCodigoWarehouseApi {
     public class Startup {
         public void ConfigureServices (IServiceCollection services) {
             services.AddDbContext<WarehouseContext> (builder => {
-                builder.UseMySql("server=localhost;uid=warehouse-api;pwd=123456;database=Warehouse");
+                builder.UseMySql("server=localhost;uid=warehouse-api;pwd=123456;database=Warehouse;oldguids=true");
             });
 
             services.AddMvc ();

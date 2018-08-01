@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace AcademiaCodigoWarehouseApi.Controllers.Products {
@@ -15,6 +16,6 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products {
         [Required]
         public decimal Price { get; set; }
 
-        public long Version { get; set; }
+        public Guid Version { get; set; }
     }
 }
