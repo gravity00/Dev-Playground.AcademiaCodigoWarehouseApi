@@ -110,7 +110,7 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products {
         [Route("{code}"), HttpGet]
         public IActionResult Get(string code)
         {
-            var product = MockProducts
+            var product = _ctx.Set<ProductEntity>()
                 .SingleOrDefault(e => e.Code.Equals(code.Trim(), StringComparison.InvariantCultureIgnoreCase));
             
             if(product == null)
