@@ -8,7 +8,6 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products {
     [Route ("api/products")]
     public class ProductsController : Controller, IProductsEndpoint {
 
-        private static readonly List<ProductEntity> MockProducts = new List<ProductEntity>();
         private readonly WarehouseContext _ctx;
 
         public ProductsController(WarehouseContext ctx){
@@ -135,7 +134,9 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products {
         [Route("update/{id}"), HttpPost]
         public IActionResult Update (long id, [FromBody] UpdateProductModel model){
             if(ModelState.IsValid){
-                var product = MockProducts.SingleOrDefault(e => e.Id == id);
+                var productsSet = _ctx.Set<ProductEntity>();
+
+                var product = productsSet.SingleOrDefault(e => e.Id == id);
                 if(product == null){
                     return NotFound();
                 }
@@ -147,14 +148,14 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products {
                 }
 
                 var modelCode = model.Code.Trim();
-                if(!product.Code.EqualsOrdinalIgnoreCase(modelCode) && MockProducts.Any(e => e.Code.EqualsOrdinalIgnoreCase(modelCode))){
+                if(!product.Code.EqualsOrdinalIgnoreCase(modelCode) && productsSet.Any(e => e.Code.EqualsOrdinalIgnoreCase(modelCode))){
                     return Conflict(new {
                         Message="Código duplicado"
                     });
                 }
 
                 var modelName = model.Name.Trim();
-                if(!product.Name.EqualsOrdinalIgnoreCase(modelName) && MockProducts.Any(e => e.Name.EqualsOrdinalIgnoreCase(modelName))){
+                if(!product.Name.EqualsOrdinalIgnoreCase(modelName) && productsSet.Any(e => e.Name.EqualsOrdinalIgnoreCase(modelName))){
                     return Conflict(new {
                         Message="Nome duplicado"
                     });
@@ -167,6 +168,8 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products {
                 product.UpdatedOn = DateTimeOffset.Now;
                 product.UpdatedBy = User.Identity.Name;
                 ++product.Version;
+
+                _ctx.SaveChanges();
 
                 return Json(new ProductActionResultModel{
                     Version = product.Version
@@ -185,7 +188,7 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products {
         [Route("deactivate/{id}"), HttpPost]
         public IActionResult Deactivate (long id, [FromBody] DeactivateProductModel model){
             if(ModelState.IsValid){
-                var product = MockProducts.SingleOrDefault(e => e.Id == id);
+                var product = _ctx.Set<ProductEntity>().SingleOrDefault(e => e.Id == id);
                 if(product == null){
                     return NotFound();
                 }
@@ -199,6 +202,8 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products {
                 product.DeletedOn = product.UpdatedOn = DateTimeOffset.Now;
                 product.DeletedBy = product.UpdatedBy = User.Identity.Name;
                 ++product.Version;
+
+                _ctx.SaveChanges();
 
                 return Json(new ProductActionResultModel{
                     Version = product.Version
@@ -215,9 +220,9 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products {
         }
 
         [Route("activate/{id}"), HttpPost]
-        public IActionResult Activate(long id, ActivateProductModel model){
+        public IActionResult Activate(long id, [FromBody] ActivateProductModel model){
             if(ModelState.IsValid){
-                var product = MockProducts.SingleOrDefault(e => e.Id == id);
+                var product = _ctx.Set<ProductEntity>().SingleOrDefault(e => e.Id == id);
                 if(product == null){
                     return NotFound();
                 }
@@ -233,6 +238,8 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products {
                 product.UpdatedOn = DateTimeOffset.Now;
                 product.UpdatedBy = User.Identity.Name;
                 ++product.Version;
+
+                _ctx.SaveChanges();
 
                 return Json(new ProductActionResultModel{
                     Version = product.Version
