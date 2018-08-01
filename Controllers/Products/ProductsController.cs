@@ -78,7 +78,7 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products {
             }
             
             var now = DateTimeOffset.Now;
-            var username = GetUserName();
+            var username = this.GetUserName();
 
             var product = new ProductEntity{
                 Code = model.Code,
@@ -158,7 +158,7 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products {
             product.Description = model.Description;
             product.Price = model.Price;
             product.UpdatedOn = DateTimeOffset.Now;
-            product.UpdatedBy = GetUserName();
+            product.UpdatedBy = this.GetUserName();
             product.Version = Guid.NewGuid();
 
             productsSet.Update(product);
@@ -186,7 +186,7 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products {
             }
 
             product.DeletedOn = product.UpdatedOn = DateTimeOffset.Now;
-            product.DeletedBy = product.UpdatedBy = GetUserName();
+            product.DeletedBy = product.UpdatedBy = this.GetUserName();
             product.Version = Guid.NewGuid();
 
             _ctx.SaveChanges();
@@ -214,7 +214,7 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products {
             product.DeletedOn = null;
             product.DeletedBy = null;
             product.UpdatedOn = DateTimeOffset.Now;
-            product.UpdatedBy = GetUserName();
+            product.UpdatedBy = this.GetUserName();
             product.Version = Guid.NewGuid();
 
             _ctx.SaveChanges();
@@ -222,10 +222,6 @@ namespace AcademiaCodigoWarehouseApi.Controllers.Products {
             return new ProductActionResultModel{
                 Version = product.Version
             };
-        }
-
-        private string GetUserName(){
-            return User.Identity.Name ?? "anonymous";
         }
     }
 }
