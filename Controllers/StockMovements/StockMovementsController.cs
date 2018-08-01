@@ -4,6 +4,7 @@ using System.Linq;
 using AcademiaCodigoWarehouseApi.Database;
 using AcademiaCodigoWarehouseApi.Exceptions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace AcademiaCodigoWarehouseApi.Controllers.StockMovements {
     [Route ("api/stockmovements")]
@@ -70,6 +71,30 @@ namespace AcademiaCodigoWarehouseApi.Controllers.StockMovements {
                 CreatedOn = DateTimeOffset.Now,
                 CreatedBy = this.GetUserName(),
                 Product = product
+            };
+            _ctx.Add(stockMovement);
+
+            _ctx.SaveChanges();
+
+            return new StockMovementActionResultModel{
+                Id = stockMovement.Id
+            };
+        }
+
+        [Route ("revert/{id}"), HttpPost]
+        public StockMovementActionResultModel Revert(long id){
+
+            var stockMovementToRevert = _ctx.Set<StockMovementEntity>().SingleOrDefault(e => e.Id == id);
+            if(stockMovementToRevert == null){
+                throw new NotFoundException();
+            }
+
+            var stockMovement = new StockMovementEntity{
+                Price = stockMovementToRevert.Price,
+                Quantity = stockMovementToRevert.Quantity * -1,
+                CreatedOn = DateTimeOffset.Now,
+                CreatedBy = this.GetUserName(),
+                ProductId = stockMovementToRevert.ProductId
             };
             _ctx.Add(stockMovement);
 

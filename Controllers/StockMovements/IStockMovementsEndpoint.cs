@@ -10,5 +10,7 @@ namespace AcademiaCodigoWarehouseApi.Controllers.StockMovements
         );
 
         StockMovementActionResultModel Create(string productCode, CreateStockmovementModel model);
+
+        StockMovementActionResultModel Revert(long id);
     }
 }
